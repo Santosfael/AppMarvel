@@ -34,6 +34,12 @@ struct ResultHero: Codable {
 	let stories: Stories?
 	let events: Comics?
 	let urls: [URLElement]?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name
+        case resultDescription = "description"
+        case thumbnail, resourceURI, comics, series, stories, events, urls
+    }
 
 }
 
@@ -75,10 +81,9 @@ enum TypeEnum: String, Codable {
 struct Thumbnail: Codable {
 	let path: String?
 	let thumbnailExtension: String?
-
 	enum CodingKeys: String, CodingKey {
 		case path
-		case thumbnailExtension
+		case thumbnailExtension = "extension"
 	}
 }
 

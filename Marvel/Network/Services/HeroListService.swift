@@ -11,9 +11,9 @@ class HeroListService: HeroListServiceProtocol {
 	
 	let session = URLSession.shared
 	
-	func execute(handler: @escaping (Result<Hero, HeroError>) -> Void) {
+	func execute(searchHero: String?, handler: @escaping (Result<Hero, HeroError>) -> Void) {
 		
-		let request: HomeRequest = .home
+        let request: HomeRequest = .home(searchHero)
 		
 		if var baseUrl = URLComponents(string: request.baseURL) {
 			

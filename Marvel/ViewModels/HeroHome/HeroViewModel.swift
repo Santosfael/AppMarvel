@@ -10,18 +10,22 @@ import Foundation
 class HeroViewModel {
 	
 	private var services: HeroListServiceProtocol
+    
+    var countHero: Int {
+        return hero?.data?.results?.count ?? 0
+    }
 	
 	weak var delegate: HeroViewModelDelegate?
 	
-	var hero: Hero?
+	private var hero: Hero?
 	
 	init(services: HeroListServiceProtocol) {
 		self.services = services
 	}
 	
-	func fetchHero() {
+    func fetchHero(search: String? = nil) {
 		
-		services.execute { result in
+        services.execute(searchHero: search) { result in
 			
 			switch result {
 			case .success(let hero):
@@ -40,4 +44,8 @@ class HeroViewModel {
 	private func error(error: String) {
 		delegate?.errorToFetchHero(error)
 	}
+    
+    func dataHero(by index: Int) -> ResultHero? {
+        return hero?.data?.results?[index]
+    }
 }

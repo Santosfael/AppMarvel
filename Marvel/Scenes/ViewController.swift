@@ -26,19 +26,21 @@ class ViewController: UIViewController {
     
     //Começamos aqui
     let searchController = UISearchController(searchResultsController: nil)
-    //let heroCollectionTableView = HeroCollectionView(view: self.view)
     
-    override func loadView() {
-        let heroCollectionTableView = HeroCollectionView(view: CGSize(width: 120, height: 200))
-        self.view = heroCollectionTableView
-        heroCollectionTableView.collectionTableView.delegate = self
-    }
-	
+    lazy var collectionTableView: UICollectionView = {
+        let flowLayout = collectionLayout()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.showsVerticalScrollIndicator = false
+        return collection
+    }()
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		viewModel?.delegate = self
-        configView()
+        setupHero()
+        view.backgroundColor = .systemBackground
 	
 		state = .loading
         
@@ -47,9 +49,15 @@ class ViewController: UIViewController {
 		fetchHero()
 	}
     
-    private func configView() {
+    private func setupHero() {
         title = "Heros"
         navigationControllerSetup()
+        view.addSubview(collectionTableView)
+//
+        constraints()
+        registerCell()
+        collectionTableView.dataSource = self
+        collectionTableView.delegate = self
     }
     
     private func navigationControllerSetup() {
@@ -65,11 +73,33 @@ class ViewController: UIViewController {
         searchController.searchBar.placeholder = "Pesquisar heroi"
         definesPresentationContext = true
         searchController.loadViewIfNeeded()
+        searchController.searchBar.autocapitalizationType = .none
         
         searchController.searchBar.delegate = self
         
         searchController.searchBar.sizeToFit()
         searchController.hidesNavigationBarDuringPresentation = false
+    }
+    
+    private func registerCell() {
+        collectionTableView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
+    }
+    
+    private func collectionLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: (view.frame.size.width / 2) - 30, height: 200)
+        layout.minimumLineSpacing = 10
+        layout.scrollDirection = .vertical
+        return layout
+    }
+    
+    private func constraints() {
+        NSLayoutConstraint.activate([
+            collectionTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            collectionTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            collectionTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 	
 	private func fetchHero() {
@@ -82,8 +112,9 @@ class ViewController: UIViewController {
 		case .loading:
 			print("loading")
 		case .normal:
-			print("normal")
-			print(viewModel?.hero?.data?.results?[0].name ?? "")
+            DispatchQueue.main.async {
+                self.collectionTableView.reloadData()
+            }
 		case .error:
 			print("error")
 		}
@@ -107,12 +138,46 @@ extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating, U
     func updateSearchResults(for searchController: UISearchController) {
         
     }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel?.fetchHero(search: searchBar.text)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        viewModel?.fetchHero()
+    }
 }
 
 extension ViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        guard let hero = viewModel?.dataHero(by: indexPath.row) else {
+            return
+        }
+        let detailViewModel = HeroDetailViewModel(hero: hero)
+        let heroDetailViewController = DetailViewController()
+        heroDetailViewController.viewModel = detailViewModel
+        navigationController?.pushViewController(heroDetailViewController, animated: true)
     }
     
 }
+
+extension ViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel?.countHero ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as? CustomCollectionViewCell else { return UICollectionViewCell() }
+        if let dataHero = viewModel?.dataHero(by: indexPath.row) {
+            cell.dataCell(with: dataHero)
+        }
+        
+        return cell
+        
+    }
+    
+    
+}
+

@@ -9,7 +9,7 @@ import Foundation
 
 enum HomeRequest: URLRequestProtocol {
 	
-	case home
+	case home(String?)
 	case details
 	
 	var baseURL: String {
@@ -21,8 +21,12 @@ enum HomeRequest: URLRequestProtocol {
 		let timestamp = NSDate().timeIntervalSince1970.description
 		
 		switch self {
-		case .home:
-			return "limit=30&ts=\(timestamp)&apikey=\(Environment.publicKey)&hash=\(hashMD5(timestamp: timestamp))"
+		case .home(let searchHero):
+            var pathHome = "limit=30&ts=\(timestamp)&apikey=\(Environment.publicKey)&hash=\(hashMD5(timestamp: timestamp))"
+            if let search = searchHero {
+                pathHome += "&nameStartsWith=\(search)"
+            }
+			return pathHome
 		case .details:
 			return "details=423432424"
 		}
