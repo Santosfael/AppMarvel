@@ -15,6 +15,8 @@ class CustomCollectionViewCell: UICollectionViewCell {
     lazy var heroImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 10
+        image.layer.masksToBounds = true
         return image
     }()
     
@@ -23,6 +25,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.numberOfLines = 0
+        label.textColor = .white
         label.textAlignment = .center
         return label
     }()

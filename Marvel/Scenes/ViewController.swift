@@ -8,7 +8,6 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
 
 	fileprivate enum ViewState {
 	  case loading
@@ -32,7 +31,17 @@ class ViewController: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.showsVerticalScrollIndicator = false
+        //collection.gradientBackGround(firstColor: .black, secondColor: .red)
+        collection.backgroundColor = .black
         return collection
+    }()
+    
+    lazy var loadingView: UIActivityIndicatorView = {
+        let loading = UIActivityIndicatorView(style: .large)
+        loading.translatesAutoresizingMaskIntoConstraints = false
+        loading.hidesWhenStopped = true
+        loading.color = .red
+        return loading
     }()
     
 	override func viewDidLoad() {
@@ -40,7 +49,7 @@ class ViewController: UIViewController {
 		
 		viewModel?.delegate = self
         setupHero()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .black
 	
 		state = .loading
         
@@ -53,6 +62,7 @@ class ViewController: UIViewController {
         title = "Heros"
         navigationControllerSetup()
         view.addSubview(collectionTableView)
+        view.addSubview(loadingView)
 //
         constraints()
         registerCell()
@@ -64,6 +74,17 @@ class ViewController: UIViewController {
         navigationItem.searchController = searchController
         self.definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.backgroundColor = .black
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         self.searchBarControllerSetup()
     }
     
@@ -75,7 +96,9 @@ class ViewController: UIViewController {
         searchController.loadViewIfNeeded()
         searchController.searchBar.autocapitalizationType = .none
         
+        searchController.searchBar.searchTextField.tintColor = .red
         searchController.searchBar.delegate = self
+        searchController.searchBar.searchTextField.textColor = .white
         
         searchController.searchBar.sizeToFit()
         searchController.hidesNavigationBarDuringPresentation = false
@@ -100,6 +123,13 @@ class ViewController: UIViewController {
             collectionTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             collectionTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            loadingView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 	
 	private func fetchHero() {
@@ -110,16 +140,30 @@ class ViewController: UIViewController {
 		
 		switch state {
 		case .loading:
-			print("loading")
+			startLoading()
 		case .normal:
             DispatchQueue.main.async {
                 self.collectionTableView.reloadData()
+                self.stopLoading()
             }
+            
 		case .error:
-			print("error")
+            DispatchQueue.main.async {
+                self.stopLoading()
+            }
 		}
 		
 	}
+    
+    private func startLoading() {
+        loadingView.startAnimating()
+        collectionTableView.isHidden = true
+    }
+    
+    private func stopLoading() {
+        loadingView.stopAnimating()
+        collectionTableView.isHidden = false
+    }
 }
 
 extension ViewController: HeroViewModelDelegate {

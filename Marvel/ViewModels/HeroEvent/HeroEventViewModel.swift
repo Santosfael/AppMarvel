@@ -7,11 +7,11 @@
 
 import Foundation
 
-class HeroDetailViewModel {
+class HeroEventViewModel {
     
     private var hero: ResultHero?
     
-    var delegate: HeroDetailViewModelDelegate?
+    var delegate: HeroEventViewModelDelegate?
     
     init(hero: ResultHero) {
         self.hero = hero
@@ -22,5 +22,13 @@ class HeroDetailViewModel {
         if let hero = hero {
             delegate?.heroUpdated(result: hero)
         }
+    }
+    
+    var eventCount: Int {
+        return hero?.events?.items?.count ?? 0
+    }
+    
+    func getNameEvent(by index: Int) -> String {
+        return hero?.events?.items?[index].name ?? ""
     }
 }

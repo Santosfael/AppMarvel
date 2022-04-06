@@ -7,7 +7,7 @@
 
 import Foundation
 
-class HeroEventViewModel {
+class HeroDetailViewModel {
     
     private var hero: ResultHero?
     
@@ -23,4 +23,10 @@ class HeroEventViewModel {
             delegate?.heroUpdated(result: hero)
         }
     }
+    
+    func getHero() -> ResultHero? {
+        return hero
+    }
+    
+    
 }

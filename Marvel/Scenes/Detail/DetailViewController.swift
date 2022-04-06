@@ -15,32 +15,30 @@ class DetailViewController: UIViewController {
         let image = UIImageView()
         image.image = UIImage(systemName: "applelogo")
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.masksToBounds = true
+        image.layer.cornerRadius = 10
         return image
     }()
     
     lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Deasadasdasdasdas"
+        label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .justified
         return label
     }()
     
-    lazy var eventButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
+    lazy var eventButton: CustomUIButton = {
+        let button = CustomUIButton()
         button.setTitle("Veja mais eventos", for: .normal)
-        button.backgroundColor = .systemRed
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(heroEvent), for: .touchUpInside)
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .black
         viewModel?.delegate = self
         setupView()
         viewModel?.updateViewIfNeeded()
@@ -56,13 +54,18 @@ class DetailViewController: UIViewController {
     }
     
     @objc private func heroEvent() {
+        guard let hero = viewModel?.getHero() else { return }
         
+        let detailViewModel = HeroEventViewModel(hero: hero)
+        let eventHeroViewController = EventHeroViewController()
+        eventHeroViewController.viewModel = detailViewModel
+        navigationController?.pushViewController(eventHeroViewController, animated: true)
     }
     
     private func constrainsts() {
         //Image
         NSLayoutConstraint.activate([
-            heroImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            heroImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             heroImage.widthAnchor.constraint(equalToConstant: view.frame.size.width / 2),
             heroImage.heightAnchor.constraint(equalToConstant: view.frame.size.width / 2),
             heroImage.centerXAnchor.constraint(equalTo: view.centerXAnchor)
@@ -78,8 +81,8 @@ class DetailViewController: UIViewController {
         //Button
         NSLayoutConstraint.activate([
             eventButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
-            eventButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            eventButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            eventButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 32),
+            eventButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -32),
             eventButton.heightAnchor.constraint(equalToConstant: 45)
         ])
     }
