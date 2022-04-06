@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum HomeRequest: URLRequestProtocol {
+enum HeroRequest: URLRequestProtocol {
 	
 	case home(String?)
 	case details

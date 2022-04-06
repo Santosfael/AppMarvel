@@ -15,7 +15,7 @@ enum HeroError: Error {
 }
 
 protocol HeroListServiceProtocol: AnyObject {
-	
+	/// handler -> é um objeto any que retorna sucesso ou uma falha
     func execute(searchHero: String?, handler: @escaping(Result<Hero, HeroError>) -> Void)
 	
 }

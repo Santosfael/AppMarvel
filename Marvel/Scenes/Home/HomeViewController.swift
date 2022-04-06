@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class HomeViewController: UIViewController {
 
 	fileprivate enum ViewState {
 	  case loading
@@ -105,7 +105,7 @@ class ViewController: UIViewController {
     }
     
     private func registerCell() {
-        collectionTableView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
+        collectionTableView.register(HeroCollectionViewCell.self, forCellWithReuseIdentifier: HeroCollectionViewCell.identifier)
     }
     
     private func collectionLayout() -> UICollectionViewFlowLayout {
@@ -166,7 +166,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: HeroViewModelDelegate {
+extension HomeViewController: HeroViewModelDelegate {
 	func heroFetchWithSucess() {
 		state = .normal
 	}
@@ -178,7 +178,7 @@ extension ViewController: HeroViewModelDelegate {
 	}
 }
 
-extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
+extension HomeViewController: UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         
     }
@@ -192,7 +192,7 @@ extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating, U
     }
 }
 
-extension ViewController: UICollectionViewDelegate {
+extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
@@ -207,13 +207,13 @@ extension ViewController: UICollectionViewDelegate {
     
 }
 
-extension ViewController: UICollectionViewDataSource {
+extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel?.countHero ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as? CustomCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCollectionViewCell.identifier, for: indexPath) as? HeroCollectionViewCell else { return UICollectionViewCell() }
         if let dataHero = viewModel?.dataHero(by: indexPath.row) {
             cell.dataCell(with: dataHero)
         }

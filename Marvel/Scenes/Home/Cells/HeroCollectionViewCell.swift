@@ -8,9 +8,9 @@
 import UIKit
 import Kingfisher
 
-class CustomCollectionViewCell: UICollectionViewCell {
+class HeroCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = "CustomCollectionViewCell"
+    static let identifier = "HeroCollectionViewCell"
     
     lazy var heroImage: UIImageView = {
         let image = UIImageView()

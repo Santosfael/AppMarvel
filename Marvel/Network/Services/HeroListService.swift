@@ -13,7 +13,7 @@ class HeroListService: HeroListServiceProtocol {
 	
 	func execute(searchHero: String?, handler: @escaping (Result<Hero, HeroError>) -> Void) {
 		
-        let request: HomeRequest = .home(searchHero)
+        let request: HeroRequest = .home(searchHero)
 		
 		if var baseUrl = URLComponents(string: request.baseURL) {
 			

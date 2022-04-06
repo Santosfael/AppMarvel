@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		let service = HeroListService()
 		let viewModel = HeroViewModel(services: service)
-		let heroViewController = ViewController()
+		let heroViewController = HomeViewController()
 		
 		heroViewController.viewModel = viewModel
 		window?.rootViewController = UINavigationController(rootViewController: heroViewController)
